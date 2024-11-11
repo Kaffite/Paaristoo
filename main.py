@@ -24,7 +24,6 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 
 #Objektid
 platform = pygame.Rect(0, 400, 1000, 15)  # Platvormi asukoht ja suurus (x, y, length, width)
-platform_floor = pygame.Rect(0, 1000, 1280, 15) 
 
 #Mängija
 player = pygame.Rect((300, 250, 50, 50)) #Alguspunkt
@@ -74,7 +73,6 @@ while run:
 
     #Platform
     pygame.draw.rect(screen, (0, 255, 0), platform)
-    pygame.draw.rect(screen, (0, 255, 0), platform_floor)
 
     #Mängija
     pygame.draw.rect(screen, (255, 0, 0), player)
@@ -82,7 +80,7 @@ while run:
     
 
     # Gravitatsioon - kui mängija on platvormil või õhus, siis kukutatakse ta allapoole
-    if player.colliderect(platform) or player.colliderect(platform_floor) :  # Kui mängija on platvormil
+    if player.colliderect(platform):  # Kui mängija on platvormil
         playerfalling = 0
         player.bottom <= platform.top  # Asetame mängija platvormi peale
     else:
