@@ -37,7 +37,7 @@ paused = False
 run = True
 
 
-#PÕHITSÜKKEL - väga tähtis :)
+#PÕHITSÜKKEL ehk game loop - väga tähtis :)
 while run:
 
     #Ristist kinni panemine ja paus
