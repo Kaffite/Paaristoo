@@ -1,10 +1,10 @@
 """
 Liikumine hetkel vasakule ja paremale + hüppamine. 
-Pausi funktsioon tomib, kuid saaks lühemalt ja kõik ühes kohas.
 
 Miski pole kivisse raiutud, kustuta ja muuda julgelt, tegin selle lihtsalt harjutamiseks.
 
 Siit edasi nt: ?
+respawn(kui sured)
 Maailma lajendamine
 Vaba liikumine - et liikumine ei peaks olema ekraani sees, vaid mängija saab liikuda ringi
 Liikumine teha sujuvamaks
@@ -18,12 +18,13 @@ import pygame
 pygame.init()
 
 
-screen_width =  800
-screen_height = 600
+screen_width =  1280
+screen_height = 1024
 screen = pygame.display.set_mode((screen_width, screen_height))
 
 #Objektid
-platform = pygame.Rect(0, 400, 800, 15)  # Platvormi asukoht ja suurus
+platform = pygame.Rect(0, 400, 1000, 15)  # Platvormi asukoht ja suurus (x, y, length, width)
+platform_floor = pygame.Rect(0, 1000, 1280, 15) 
 
 #Mängija
 player = pygame.Rect((300, 250, 50, 50)) #Alguspunkt
@@ -71,14 +72,17 @@ def pause():
 while run:
     screen.fill(color='black')
 
-    #Platformi ja mängija
+    #Platform
     pygame.draw.rect(screen, (0, 255, 0), platform)
+    pygame.draw.rect(screen, (0, 255, 0), platform_floor)
+
+    #Mängija
     pygame.draw.rect(screen, (255, 0, 0), player)
     player.y += playerfalling #Rakendame mängija vertikaalset liikumist
     
 
     # Gravitatsioon - kui mängija on platvormil või õhus, siis kukutatakse ta allapoole
-    if player.colliderect(platform):  # Kui mängija on platvormil
+    if player.colliderect(platform) or player.colliderect(platform_floor) :  # Kui mängija on platvormil
         playerfalling = 0
         player.bottom <= platform.top  # Asetame mängija platvormi peale
     else:
@@ -96,12 +100,13 @@ while run:
 
     #Eventid
     for event in pygame.event.get():
+
         if event.type == pygame.QUIT: #Ristist kinni
             run = False
-            
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_p:#Paus
 
+        if event.type == pygame.KEYDOWN:
+
+            if event.key == pygame.K_p:#Paus
                 if pause() == False:
                      run = False
 
