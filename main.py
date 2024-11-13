@@ -1,5 +1,13 @@
 """
-Praegu on mäng algfaasis. Mängija saab liikuda, tulistada ning platformid töötavad nagu vaja. Praegu pole mängul eriti sisu, kuid palju põhilisi asju on tehtud.
+Mängu tegid: Karl-Markus Hannust ja Robert Palm
+
+
+NB: Mängu käivitamiseks on vaja mängu tausta ja tegelase pildifaile ning pygame moodulit.
+
+
+Praegu on mäng algfaasis. Mängija saab liikuda, tulistada ning platformid töötavad nagu vaja.
+Mängul pole veel eriti sisu, kuid palju põhilisi asju on tehtud.
+
 
 Nupud:
 W, A, S, D -Liikumine
@@ -7,7 +15,14 @@ SPACE - tulistamine
 P - mängu pausile panemine
 
 
-Kasutatud videod, interneti materjal:
+Pygamesi baasiks ja õppimiseks kasutasime - 
+https://www.youtube.com/watch?v=y9VG3Pztok8
+
+Mängu tegelane on ajutine ja joonistasime ise lehel - 
+https://www.pixilart.com/draw
+
+Mängu taust on ajutine ning võtsime lehelt, kus olid litsentsivabad tehisintellekti pildid, kuid lõppversioonis tahame ise oma kunsti luua - 
+https://www.freepik.com/free-photos-vectors/pixel-art-cloud
 
 """
 import pygame
