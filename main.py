@@ -5,7 +5,7 @@ Mängu tegid: Karl-Markus Hannust ja Robert Palm
 NB: Mängu käivitamiseks on vaja mängu tausta ja tegelase pildifaile ning pygame moodulit.
 
 
-Praegu on mäng algfaasis. Mängija saab liikuda, tulistada ning platformid töötavad nagu vaja.
+Praegu on mäng algfaasis. Mängija saab liikuda, tulistada ning platforms töötavad nagu vaja.
 Mängul pole veel eriti sisu, kuid palju põhilisi asju on tehtud.
 
 
@@ -23,7 +23,7 @@ https://www.pixilart.com/draw
 
 Mängu taust on ajutine ning võtsime lehelt, kus olid litsentsivabad tehisintellekti pildid, kuid lõppversioonis tahame ise oma kunsti luua - 
 https://www.freepik.com/free-photos-vectors/pixel-art-cloud
-
+z
 """
 import pygame
 
@@ -35,11 +35,29 @@ clock = pygame.time.Clock()
 fps = 60
 
 
-# Platvormi asukoht ja suurus (x, y, length, width)
-platform_1 = pygame.Rect(100, 500, 400, 40)
-platform_2 = pygame.Rect(700, 500, 400, 40)
+platform_length = 400
 
-platformid = [platform_1, platform_2]
+platformi_width = 45
+
+deep_length = 300
+deep_length_mid = 500
+deep_width = 450
+# X start, Y start, X pikkus, Y laius
+#platformid põhjas
+platform_1 = pygame.Rect(500, 800 , deep_length_mid, deep_width)
+platform_2 = pygame.Rect(100, 600, deep_length, deep_width)
+platform_3 = pygame.Rect(1100,600, deep_length, deep_width)
+
+#platformid taevas
+platform_4 = pygame.Rect(50, 200 , platform_length, platformi_width) #PLATFORM 
+platform_5 = pygame.Rect(1050, 200 , platform_length, platformi_width)
+platform_6 = pygame.Rect(550, 400 , platform_length, platformi_width)
+
+platform_image = pygame.image.load('grass.png')
+platform_image = pygame.transform.scale(platform_image, (platform_length, platformi_width)) 
+platform_image_deep = pygame.transform.scale(platform_image, (deep_length, deep_width))  
+platform_image_deep_mid = pygame.transform.scale(platform_image, (deep_length_mid, deep_width))  
+platforms = [platform_1, platform_2, platform_3, platform_4, platform_5,platform_6]
 
 # Mängija, taust
 player_start_x, player_start_y = 300, 250
@@ -55,8 +73,8 @@ background_image  = pygame.transform.scale(background_image, (screen_width, scre
 # Mängija atribuudid
 speed = 7 
 playerfalling = 0 
-gravity = 0.3 
-jump = -6    
+gravity = 0.2 
+jump = -22  
 
 # Paus ja run
 paused = False
@@ -121,16 +139,19 @@ def respawn():
     playerfalling = 0 
     return True
             
-
-
 while run:
     screen.fill(color='black')
     screen.blit(background_image, (0,0))
     
-    # platformid
-    pygame.draw.rect(screen, (0, 255, 0), platform_1)
-    pygame.draw.rect(screen, (0, 255, 0), platform_2)
-
+    # platforms
+    for i in range(len(platforms)):
+        #pygame.draw.rect(screen, (0,255,0), platforms[i])
+        if i == 0:
+            screen.blit(platform_image_deep_mid, platforms[i])
+        elif 0 < i < 3:
+            screen.blit(platform_image_deep, platforms[i])
+        else:
+            screen.blit(platform_image, platforms[i])
 
     # Mängija
     screen.blit(player_image, (player.x, player.y))
@@ -139,21 +160,21 @@ while run:
     
 
     # Gravitatsioon - kui mängija on platvormil või õhus, siis kukutatakse ta allapoole
-    for i in range(len(platformid)):
-        if player.colliderect(platformid[i]):
-            if player.bottom >= platformid[i].top:
+    for i in range(len(platforms)):
+        if player.colliderect(platforms[i]):
+            if player.bottom >= platforms[i].top:
 
                 #Mängija ei vaju läbi platformi
-                if player.bottom < (platformid[i].top +25):
+                if player.bottom < (platforms[i].top +25):
                     playerfalling = 0
-                    player.bottom = platformid[i].top +5
+                    player.bottom = platforms[i].top +5
 
                 #Ei lase mängijal platformi sisse minna (paremalt, vasakult)
                 else:
-                    if platformid[i].left < player.x < platformid[i].right:  # parem
-                        player.x = platformid[i].right
-                    elif player.x + player_width > platformid[i].left:  # vasak
-                        player.x = platformid[i].left - player_width
+                    if platforms[i].left < player.x < platforms[i].right:  # parem
+                        player.x = platforms[i].right
+                    elif player.x + player_width > platforms[i].left:  # vasak
+                        player.x = platforms[i].left - player_width
         
         else:
             playerfalling += gravity 
@@ -177,11 +198,12 @@ while run:
         shooting_direction = 1 
         
     if keys[pygame.K_w]:
-        for platform in platformid:
+        for platform in platforms:
             if player.colliderect(platform):  # Hüpe toimub ainult, kui mängija on platvormil
                 if player.bottom >= platform.top:
                     if player.bottom < (platform.top +10):
                         playerfalling = jump
+                        
 
     for event in pygame.event.get():
 
