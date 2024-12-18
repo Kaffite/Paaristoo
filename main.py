@@ -1,30 +1,20 @@
 """
+SNAKE WARS
+
 Mängu tegid: Karl-Markus Hannust ja Robert Palm
 
-
-NB: Mängu käivitamiseks on vaja mängu tausta ja tegelase pildifaile ning pygame moodulit.
-
-
-Praegu on mäng algfaasis. Mängija saab liikuda, tulistada ning platforms töötavad nagu vaja.
-Mängul pole veel eriti sisu, kuid palju põhilisi asju on tehtud.
-
+NB: Mängu käivitamiseks on vaja mängu tausta, tegelase pildifaile ja veidi muid pildifaile ning pygame moodulit.
 
 Nupud:
 W, A, S, D -Liikumine
 SPACE - tulistamine
 P - mängu pausile panemine
 
-
 Pygamesi baasiks ja õppimiseks kasutasime - 
 https://www.youtube.com/watch?v=y9VG3Pztok8
 
-Mängu tegelased ja muud võtsime lehelt
+Mängu tegelased ja muud võtsime lehelt, millel oli CC0 litsents.
 https://opengameart.org/content/platformer-art-complete-pack-often-updated
-
-Mängu tausta võtsime lehelt, kus olid litsentsivabad tehisintellekti pildid
-https://www.freepik.com/free-photos-vectors/pixel-art-cloud
-
-z
 """
 import pygame
 import time
@@ -37,7 +27,6 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 clock = pygame.time.Clock()
 fps = 60
 
-
 platform_length = 400
 platform_width = 45
 small_length = 300
@@ -46,15 +35,13 @@ deep_length = 300
 deep_length_mid = 500
 deep_width = 450
 
-
 # X start, Y start, X pikkus, Y laius
 #platformd põhjas
-
 platform_1 = pygame.Rect(500, 800 , deep_length_mid, deep_width)
 platform_2 = pygame.Rect(100, 600, deep_length, deep_width)
 platform_3 = pygame.Rect(1100,600, deep_length, deep_width)
 
-#platformd taevas
+#platformid taevas
 platform_4 = pygame.Rect(50, 200 , platform_length, platform_width)
 platform_5 = pygame.Rect(1050, 200 , platform_length, platform_width)
 platform_6 = pygame.Rect(600, 400 , small_length, platform_width)
@@ -92,11 +79,10 @@ player_image_l1 = pygame.transform.scale(player_image_l1, (player_width, player_
 player_image_l2 = pygame.image.load('player_LW2.png').convert_alpha()
 player_image_l2 = pygame.transform.scale(player_image_l2, (player_width, player_height))
 
-
 current_image = player_image_r1
 animation_time = 200  # Aeg mille tagant ta animatsiooni vahetab
 last_update_time = 0
-frame = 0 
+frame = 0
 
 # Kas mängija hetkel liigub kuhugi
 moving_r = False
@@ -150,15 +136,30 @@ class Bullet(pygame.sprite.Sprite):
         if self.rect.x > screen_width or self.rect.x < 0 :
             self.kill()
         
+def f_end():
+    font = pygame.font.SysFont('Arial', 60)
+    text = font.render(f'Su lõplik skoor oli: {score}', True, (0, 0, 0))
 
+    #Teksti ekraani keskele (see suht hea, universaalne erinevatele screen suurustele)
+    text_width, text_height = text.get_size()
+    x_pos = (screen_width - text_width) // 2
+    y_pos = (screen_height - text_height) // 2
+    screen.blit(text, (x_pos, y_pos))
 
+    # Restart tekst
+    font_small = pygame.font.SysFont('Arial', 40)
+    small_text = font_small.render('Vajuta Q, et lahkuda mängust.', True, (0, 0, 0))
+    screen.blit(small_text, (x_pos, y_pos + 60))
 
-# TEHA KUULIDE JA PLATFORMIDE COLLISION VÄRK
+    pygame.display.update()
 
-        #if self.rect.x 
-
-
-
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q:
+                    return False
 
 platform_coords = [(700, 630), (200, 430), (1200, 430), (250, 10), (1200, 10)]
 
@@ -194,7 +195,7 @@ def pause():
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return
+                return False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     return False
@@ -230,19 +231,21 @@ while run:
 
             if moving_r == True:
                 last_update_time = current_time 
-                frame = (frame + 1) % 2  
                 if frame == 0:
                     current_image = player_image_r1
-                else:
+                    frame = 1
+                elif frame == 1:
                     current_image = player_image_r2
+                    frame = 0
                     
             if moving_l == True:
                 last_update_time = current_time 
-                frame = (frame + 1) % 2  
                 if frame == 0:
                         current_image = player_image_l1
-                else:
+                        frame = 1
+                elif frame == 1:
                     current_image = player_image_l2
+                    frame = 0
 
     player.y += playerfalling
     
@@ -260,7 +263,7 @@ while run:
     # Gravitatsioon - kui mängija on platvormil või õhus, siis kukutatakse ta allapoole
     for i in range(len(platforms)):
         if player.colliderect(platforms[i]):
-            if player.bottom >= platforms[i].top:
+            if player.bottom > platforms[i].top:
 
                 #Mängija ei vaju läbi platform
                 if player.bottom < (platforms[i].top +25):
@@ -270,6 +273,7 @@ while run:
                 #Ei lase mängijal platform sisse minna (paremalt, vasakult)
                 else:
                     if platforms[i].left < player.x < platforms[i].right:  # parem
+                        
                         player.x = platforms[i].right
                     elif player.x + player_width > platforms[i].left:  # vasak
                         player.x = platforms[i].left - player_width
@@ -324,14 +328,13 @@ while run:
                         
 
     for event in pygame.event.get():
-
         if event.type == pygame.QUIT:
             run = False
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_p:  # Paus
                 if pause() == False:
-                     run = False
+                    run = False
 
             if event.key == pygame.K_a:
                 moving_l = True
@@ -341,7 +344,7 @@ while run:
 
             # Tulistamine
             if event.key == pygame.K_SPACE:  
-                # Loodud kuul liikumise suundadega, kui tal pole väärtust, tulistab paremale
+                #Loodud kuul liikumise suundadega, kui tal pole väärtust, tulistab paremale
                 try:
                     shooting_direction = shooting_direction
                 except:
@@ -360,6 +363,9 @@ while run:
                 f_snake()  # Genereerime uue koletise
                 pygame.time.set_timer(pygame.USEREVENT, 0)  # Lülitame taimeri välja
 
+    if remaining_time <= 0:
+        if f_end() == False:
+            break
     pygame.display.update()
 
     clock.tick(fps)
